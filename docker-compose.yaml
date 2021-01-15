@@ -1,0 +1,173 @@
+version: '2'  # Version of YAML file format 
+
+services:
+  db:
+    container_name: mysql
+    image: mysql:8.0.17
+    environment:
+      MYSQL_ROOT_PASSWORD: helloworld
+      MYSQL_DATABASE: testapp
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    hostname: lapan
+    links:
+      - db:db
+    ports:
+      - 8000:80
+    environment:
+      MYSQL_ROOT_PASSWORD: helloworld
+      MYSQL_DATABASE: testapp
+  api-mt:
+    container_name: api-mt
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/api-mtV2     # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "3001:3001"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.8
+  api-gateway:
+    container_name : api-gateway
+    build: 
+      context: ./gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/api-gatewayV2   # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "3000:3000"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.9
+  api-standar:
+    container_name : api-standar                # Service 1: API MT
+    build: 
+      context: ./standar
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/api-standar   # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "3004:3004"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.10
+  api-frontend:
+    container_name : api-frontend                # Service 1: API MT
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/api-frontend   # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "3003:3003"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.11
+  api-web:
+    container_name : api-web                # Service 1: API MT
+    build: 
+      context: ./api-web
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/api-web   # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "3002:3002"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.12
+  php-standar:
+    container_name : php-standar               # Service 1: API MT
+    build: 
+      context: ./php-standar
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-standar  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "81:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.13
+  php-mt:
+    container_name : php-mt               # Service 1: API MT
+    build: 
+      context: ./php-mt
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-mt  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "82:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.14
+  php-sispan:
+    container_name : php-sispan               # Service 1: API MT
+    build: 
+      context: ./php-sispan
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-sispan  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "83:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.15
+  php-backend:
+    container_name : php-backend               # Service 1: API MT
+    build: 
+      context: ./php-backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-backend  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "84:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.16
+  frontend-ipman:
+    container_name : frontend-ipman               # Service 1: API MT
+    build: 
+      context: ./frontend-ipman
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/frontend-ipman  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "85:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.18
+  php-pusispan:
+    container_name : php-pusispan               # Service 1: API MT
+    build: 
+      context: ./php-pusispan
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-pusispan  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "87:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.17
+  php-silat:
+    container_name : php-pusispan               # Service 1: API MT
+    build: 
+      context: ./php-pusispan
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/php-pusispan  # Build image from api-mt directory
+    ports:                 # Expose host port 3001
+      - "86:80"
+    networks:
+       vpcbr: 
+         ipv4_address: 10.1.0.18
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.1.0.0/16
+         gateway: 10.1.0.1
